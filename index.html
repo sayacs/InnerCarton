@@ -8,7 +8,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/svg2pdf.js/dist/svg2pdf.min.js"></script>
   <script type="module" src="./logoPaths.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
     body {
       background-color: #1a202c;
@@ -51,11 +50,6 @@
         <input id="nw" type="text" placeholder="N.W." class="p-2 rounded bg-gray-800 text-white w-full" />
         <input id="gw" type="text" placeholder="G.W." class="p-2 rounded bg-gray-800 text-white w-full" />
       </div>
-    </div>
-    <div class="mb-4">
-      <label class="block mb-2">13-digit EAN Code:</label>
-      <input id="eanInput" type="text" placeholder="Enter 13-digit EAN" maxlength="13"
-             class="p-2 rounded bg-gray-800 text-white w-full" />
     </div>
     <div class="mb-4">
       <button id="downloadBtn" class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">Download PDF</button>
@@ -179,45 +173,6 @@
             pdf.text(line.text, textX, y);
           }
         });
-
-        // Generate and render ITF-14 barcode inside sideTextBlocks loop
-        const eanValue = document.getElementById("eanInput").value.trim();
-        if (/^\d{13}$/.test(eanValue)) {
-          const ean12 = eanValue.slice(0, 12);
-          const itf14 = "1" + ean12;
-          let sum = 0;
-          for (let i = 0; i < itf14.length; i++) {
-            sum += parseInt(itf14[i]) * (i % 2 === 0 ? 3 : 1);
-          }
-          const checkDigit = (10 - (sum % 10)) % 10;
-          const fullITF14 = itf14 + checkDigit;
-
-          const canvas = document.createElement("canvas");
-          canvas.width = 300;
-          canvas.height = 100;
-          JsBarcode(canvas, fullITF14, {
-            format: "ITF",
-            displayValue: false,
-            width: 2,
-            height: 60,
-            margin: 0
-          });
-
-          const pngData = canvas.toDataURL("image/png");
-          const barcodeX = textX;
-          const barcodeY = startY + lines.length * lineHeight + 10;
-          const barcodeW = 70;
-          const barcodeH = 30;
-
-          pdf.setDrawColor(0);
-          pdf.setLineWidth(0.5);
-          pdf.rect(barcodeX - 5, barcodeY - 5, barcodeW, barcodeH);
-          pdf.addImage(pngData, 'PNG', barcodeX, barcodeY, 60, 25);
-          pdf.setFont("helvetica", "normal");
-          pdf.setFontSize(12);
-          pdf.text(fullITF14, barcodeX, barcodeY + barcodeH + 6);
-        }
-
       }
       const placementY = topMargin + contentHeight + betweenMargin;
       pdf.rect(sideMargin, placementY, L, contentHeight, 'D');
@@ -228,6 +183,5 @@
       pdf.save(`${fileName}.pdf`);
     });
   </script>
-<svg id="barcodeSVG" style="display:none;"></svg>
 </body>
 </html>
