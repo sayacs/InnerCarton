@@ -1,187 +1,256 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inner Carton Template Generator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/svg2pdf.js/dist/svg2pdf.min.js"></script>
-  <script type="module" src="./logoPaths.js"></script>
-  <style>
-    body {
-      background-color: #1a202c;
-      color: #cbd5e0;
-    }
-  </style>
-</head>
-<body class="p-6">
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-4">Inner Carton Template Generator</h1>
-    <div class="mb-4">
-      <label class="block mb-2">File Name:</label>
-      <input id="fileName" type="text" placeholder="Enter file name" class="p-2 rounded bg-gray-800 text-white w-full" />
-    </div>
-    <div class="mb-4">
-      <label class="block mb-2">Select Logo:</label>
-      <select id="logoSelect" class="p-2 rounded bg-gray-800 text-white w-full"></select>
-    </div>
-    <div class="mb-4">
-      <label class="block mb-2">Select Handle Mark:</label>
-      <select id="handleMarkSelect" class="p-2 rounded bg-gray-800 text-white w-full">
-        <option value="handleMark" selected>Handle Mark</option>
-        <option value="handleMark2">Handle Mark 2</option>
-      </select>
-    </div>
-    <div class="mb-4">
-      <label class="block mb-2">Box Dimensions (mm):</label>
-      <div class="flex space-x-2">
-        <input id="inputL" type="number" placeholder="Length (L)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
-        <input id="inputW" type="number" placeholder="Width (W)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
-        <input id="inputH" type="number" placeholder="Height (H)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inner Carton Template Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg2pdf.js/dist/svg2pdf.min.js"></script>
+    <script type="module" src="./logoPaths.js"></script>
+    <style>
+      body {
+        background-color: #1a202c;
+        color: #cbd5e0;
+      }
+    </style>
+  </head>
+  <body class="p-6">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-4">Inner Carton Template Generator</h1>
+      <div class="mb-4">
+        <input id="fileName" type="text" placeholder="Enter file name" class="p-2 rounded bg-gray-800 text-white w-full" />
+      </div>
+      <div class="mb-4">
+        <select id="logoSelect" class="p-2 rounded bg-gray-800 text-white w-full"></select>
+      </div>
+      
+      <div class="mb-4">
+        <select id="handleMarkSelect" class="p-2 rounded bg-gray-800 text-white w-full">
+          <option value="handleMark" selected>Handle Mark</option>
+          <option value="handleMark2">Handle Mark 2</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <div class="flex space-x-2">
+          <input id="inputL" type="number" placeholder="Length (L)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+          <input id="inputW" type="number" placeholder="Width (W)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+          <input id="inputH" type="number" placeholder="Height (H)" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="flex space-x-2">
+          <input type="number" id="placementFront" placeholder="Number from Front Mark" value="" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+          <input type="number" id="placementSide" placeholder="Number from Side Mark" value="" class="p-2 rounded bg-gray-800 text-white w-1/3" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block mb-2">Side Mark Info:</label>
+        <div class="grid grid-cols-2 gap-4">
+          <input id="productName" type="text" placeholder="Product Name" class="p-2 rounded bg-gray-800 text-white w-full" />
+          <input id="model" type="text" placeholder="Model" class="p-2 rounded bg-gray-800 text-white w-full" />
+          <input id="qty" type="text" placeholder="QTY" class="p-2 rounded bg-gray-800 text-white w-full" readonly />
+          <input id="nw" type="text" placeholder="N.W." class="p-2 rounded bg-gray-800 text-white w-full" />
+          <input id="gw" type="text" placeholder="G.W." class="p-2 rounded bg-gray-800 text-white w-full" />
+        </div>
+      </div>
+      <div class="mb-4">
+        <button id="downloadBtn" class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">Download PDF</button>
       </div>
     </div>
-    <div class="mb-4">
-      <label class="block mb-2">Side Mark Info:</label>
-      <div class="grid grid-cols-2 gap-4">
-        <input id="productName" type="text" placeholder="Product Name" class="p-2 rounded bg-gray-800 text-white w-full" />
-        <input id="model" type="text" placeholder="Model" class="p-2 rounded bg-gray-800 text-white w-full" />
-        <input id="qty" type="text" placeholder="QTY" class="p-2 rounded bg-gray-800 text-white w-full" />
-        <input id="nw" type="text" placeholder="N.W." class="p-2 rounded bg-gray-800 text-white w-full" />
-        <input id="gw" type="text" placeholder="G.W." class="p-2 rounded bg-gray-800 text-white w-full" />
-      </div>
-    </div>
-    <div class="mb-4">
-      <button id="downloadBtn" class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">Download PDF</button>
-    </div>
-  </div>
 
-  <script type="module">
-    import { logoPaths } from './logoPaths.js';
-    const downloadBtn = document.getElementById('downloadBtn');
-    const logoSelect = document.getElementById('logoSelect');
-    const allowedLogos = Object.keys(logoPaths);
-    logoSelect.innerHTML = '<option value="none">-- Choose a Logo --</option>' +
-      allowedLogos.map(key => `<option value="${key}">${logoPaths[key].label || key}</option>`).join('');
+    <script type="module">
+      import { logoPaths } from "./logoPaths.js";
+      const downloadBtn = document.getElementById("downloadBtn");
+      const logoSelect = document.getElementById("logoSelect");
+      const allowedLogos = Object.keys(logoPaths);
+      logoSelect.innerHTML = '<option value="none">-- Choose a Logo --</option>' + allowedLogos.map((key) => `<option value="${key}">${logoPaths[key].label || key}</option>`).join("");
 
-    downloadBtn.addEventListener('click', async () => {
-      const { jsPDF } = window.jspdf;
-      const fileName = document.getElementById('fileName').value.trim() || "inner-carton";
-      const L = parseFloat(document.getElementById('inputL').value);
-      const W = parseFloat(document.getElementById('inputW').value);
-      const H = parseFloat(document.getElementById('inputH').value);
-      const selectedLogo = logoSelect.value;
-      const handleMarkKey = document.getElementById('handleMarkSelect').value;
-      const productName = document.getElementById('productName').value.trim();
-      const model = document.getElementById('model').value.trim();
-      const qty = document.getElementById('qty').value.trim();
-      const nw = document.getElementById('nw').value.trim();
-      const gw = document.getElementById('gw').value.trim();
+      const frontInput = document.getElementById("placementFront");
+      const sideInput = document.getElementById("placementSide");
+      const qtyInput = document.getElementById("qty");
 
-      if (!L || !W || !H || selectedLogo === "none") {
-        alert("Please enter dimensions and select logo.");
-        return;
+      function updateQty() {
+        const front = parseInt(frontInput.value, 10);
+        const side = parseInt(sideInput.value, 10);
+        if (!isNaN(front) && !isNaN(side)) {
+          qtyInput.value = front * side;
+        } else {
+          qtyInput.value = "";
+        }
       }
 
-      const sideMargin = 80;
-      const topMargin = 200;
-      const betweenMargin = 100;
-      const bottomMargin = 80;
-      const widths = [L, W, L, W];
-      const contentHeight = H;
-      const totalWidth = widths.reduce((a,b)=>a+b,0) + 2 * sideMargin;
-      const totalHeight = topMargin + contentHeight * 2 + betweenMargin + bottomMargin;
-      const pdf = new jsPDF({ orientation: totalWidth > totalHeight ? 'landscape' : 'portrait', unit: 'mm', format: [totalWidth, totalHeight] });
+      frontInput.addEventListener("input", updateQty);
+      sideInput.addEventListener("input", updateQty);
 
-      let currentX = sideMargin;
-      const sideTextBlocks = [currentX + L, currentX + L + W + L];
+      downloadBtn.addEventListener("click", async () => {
+        const { jsPDF } = window.jspdf;
+        const fileName = document.getElementById("fileName").value.trim() || "inner-carton";
+        const L = parseFloat(document.getElementById("inputL").value);
+        const W = parseFloat(document.getElementById("inputW").value);
+        const H = parseFloat(document.getElementById("inputH").value);
+        const selectedLogo = logoSelect.value;
+        const handleMarkKey = document.getElementById("handleMarkSelect").value;
+        const productName = document.getElementById("productName").value.trim();
+        const model = document.getElementById("model").value.trim();
+        const qty = document.getElementById("qty").value.trim();
+        const nw = document.getElementById("nw").value.trim();
+        const gw = document.getElementById("gw").value.trim();
+        const placementFront = parseInt(document.getElementById("placementFront").value, 10);
+        const placementSide = parseInt(document.getElementById("placementSide").value, 10);
 
-      for (let i = 0; i < widths.length; i++) {
-        const width = widths[i];
-        pdf.setFillColor(196, 154, 108);
-        pdf.rect(currentX, topMargin, width, contentHeight, 'FD');
-        pdf.setDrawColor(0);
-        pdf.setLineWidth(1.2);
-        pdf.rect(currentX, topMargin, width, contentHeight, 'D');
-        pdf.setFontSize(24);
-        pdf.text(i % 2 === 0 ? 'Front Mark' : 'Side Mark', currentX + width / 2, topMargin - 10, { align: 'center' });
-        pdf.text((i % 2 === 0 ? `${L} mm` : `${W} mm`), currentX + width / 2, topMargin + contentHeight + 20, { align: 'center' });
-        currentX += width;
-      }
+        if (!L || !W || !H || selectedLogo === "none") {
+          alert("Please enter dimensions and select logo.");
+          return;
+        }
 
-      const logoData = logoPaths[selectedLogo];
-      const logoSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      logoSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      logoSVG.setAttribute("viewBox", logoData.viewBox);
-      logoSVG.innerHTML = logoData.content;
-      const scale = (25.4 / 72) * 0.75;
-      const logoW = 150;
-      const logoH = 150;
-      const logo1X = sideMargin + (L - logoW) / 2;
-      const logo1Y = topMargin + (H - logoH) / 2;
-      const logo2X = sideMargin + L + W + (L - logoW) / 2;
-      const logo2Y = logo1Y;
-      document.body.appendChild(logoSVG);
-      try {
-        await svg2pdf(logoSVG, pdf, { xOffset: logo1X, yOffset: logo1Y, scale });
-        await svg2pdf(logoSVG, pdf, { xOffset: logo2X, yOffset: logo2Y, scale });
-      } finally {
-        document.body.removeChild(logoSVG);
-      }
+        const sideMargin = 80;
+        const topMargin = 200;
+        const betweenMargin = 100;
+        const bottomMargin = 80;
+        const widths = [L, W, L, W];
+        const contentHeight = H;
+        const totalWidth = widths.reduce((a, b) => a + b, 0) + 2 * sideMargin;
+        const totalHeight = topMargin + contentHeight * 2 + betweenMargin + bottomMargin;
+        const pdf = new jsPDF({ orientation: totalWidth > totalHeight ? "landscape" : "portrait", unit: "mm", format: [totalWidth, totalHeight] });
 
-      const handleLogo = logoPaths[handleMarkKey];
-      const handleSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      handleSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      handleSVG.setAttribute("viewBox", handleLogo.viewBox);
-      handleSVG.innerHTML = handleLogo.content;
-      const viewBoxW = parseFloat(handleLogo.viewBox.split(" ")[2]);
-      const iconW = Math.max(10, Math.min(35, W - 40));
-      const handleScale = iconW / viewBoxW;
-      document.body.appendChild(handleSVG);
-      for (let x of sideTextBlocks) {
-        const xOffset = x + (W - iconW) / 2;
-        await svg2pdf(handleSVG, pdf, { xOffset, yOffset: topMargin + 10, scale: handleScale });
-      }
-      document.body.removeChild(handleSVG);
+        const fontSize = 40;
+        pdf.setFontSize(fontSize);
+        pdf.setFont("helvetica", "bold");
 
-      for (let x of sideTextBlocks) {
-        const blockW = W;
-        const textX = x + (blockW - 99) / 2;
-        const startY = topMargin + (H - 120) / 2 + 24;
-        const lines = [
-          { text: productName, fontSize: 32 },
-          { type: 'line', width: 99 },
-          { text: `Model: ${model}`, fontSize: 22 },
-          { type: 'line', width: 99 },
-          { text: `QTY: ${qty} PCS`, fontSize: 22 },
-          { type: 'line', width: 99 },
-          { text: `N.W.: ${nw} KG`, fontSize: 22 },
-          { type: 'line', width: 99 },
-          { text: `G.W.: ${gw} KG`, fontSize: 22 },
-          { type: 'line', width: 99 },
-          { text: `MEAS: ${L} x ${W} x ${H} MM`, fontSize: 22 },
-          { type: 'line', width: 99 }
-        ];
-        const lineHeight = 9;
-        lines.forEach((line, i) => {
-          const y = startY + i * lineHeight;
-          if (line.type === 'line') {
-            pdf.rect(textX, y - 5, line.width, 1, 'F');
-          } else {
-            pdf.setFontSize(line.fontSize);
-            pdf.setFont("helvetica", "bold");
-            pdf.text(line.text, textX, y);
+        const labelX = 80;
+        let labelY = 80;
+        const lineGap = 16;
+
+        // 英文
+        pdf.text(`File: ${fileName}`, labelX, labelY);
+        labelY += lineGap;
+        pdf.text(`Dimension: ${L} x ${W} x ${H} mm`, labelX, labelY);
+        labelY += lineGap;
+        pdf.text(`Color: Monochrome`, labelX, labelY);
+        labelY += lineGap;
+        pdf.text(`Material: K3K`, labelX, labelY);
+        labelY += lineGap * 2;
+
+        let currentX = sideMargin;
+        const sideTextBlocks = [currentX + L, currentX + L + W + L];
+
+        for (let i = 0; i < widths.length; i++) {
+          const width = widths[i];
+          pdf.setFillColor(196, 154, 108);
+          pdf.rect(currentX, topMargin, width, contentHeight, "FD");
+          pdf.setDrawColor(0);
+          pdf.setLineWidth(1.2);
+          pdf.rect(currentX, topMargin, width, contentHeight, "D");
+          pdf.setFontSize(24);
+          pdf.text(i % 2 === 0 ? "Front Mark" : "Side Mark", currentX + width / 2, topMargin - 10, { align: "center" });
+          pdf.text(i % 2 === 0 ? `${L} mm` : `${W} mm`, currentX + width / 2, topMargin + contentHeight + 20, { align: "center" });
+          currentX += width;
+        }
+
+        const logoData = logoPaths[selectedLogo];
+        const logoSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        logoSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        logoSVG.setAttribute("viewBox", logoData.viewBox);
+        logoSVG.innerHTML = logoData.content;
+        const scale = (25.4 / 72) * 0.75;
+        const logoW = 150;
+        const logoH = 150;
+        const logo1X = sideMargin + (L - logoW) / 2;
+        const logo1Y = topMargin + (H - logoH) / 2;
+        const logo2X = sideMargin + L + W + (L - logoW) / 2;
+        const logo2Y = logo1Y;
+        document.body.appendChild(logoSVG);
+        try {
+          await svg2pdf(logoSVG, pdf, { xOffset: logo1X, yOffset: logo1Y, scale });
+          await svg2pdf(logoSVG, pdf, { xOffset: logo2X, yOffset: logo2Y, scale });
+        } finally {
+          document.body.removeChild(logoSVG);
+        }
+
+        const handleLogo = logoPaths[handleMarkKey];
+        const handleSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        handleSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        handleSVG.setAttribute("viewBox", handleLogo.viewBox);
+        handleSVG.innerHTML = handleLogo.content;
+        const viewBoxW = parseFloat(handleLogo.viewBox.split(" ")[2]);
+        const iconW = Math.max(10, Math.min(35, W - 40));
+        const handleScale = iconW / viewBoxW;
+        document.body.appendChild(handleSVG);
+        for (let x of sideTextBlocks) {
+          const xOffset = x + (W - iconW) / 2;
+          await svg2pdf(handleSVG, pdf, { xOffset, yOffset: topMargin + 10, scale: handleScale });
+        }
+        document.body.removeChild(handleSVG);
+
+        for (let x of sideTextBlocks) {
+          const blockW = W;
+          const textX = x + (blockW - 99) / 2;
+          const startY = topMargin + (H - 120) / 2 + 24;
+          const lines = [
+            { text: productName, fontSize: 32 },
+            { type: "line", width: 99 },
+            { text: `Model: ${model}`, fontSize: 22 },
+            { type: "line", width: 99 },
+            { text: `QTY: ${qty} PCS`, fontSize: 22 },
+            { type: "line", width: 99 },
+            { text: `N.W.: ${nw} KG`, fontSize: 22 },
+            { type: "line", width: 99 },
+            { text: `G.W.: ${gw} KG`, fontSize: 22 },
+            { type: "line", width: 99 },
+            { text: `MEAS: ${L} x ${W} x ${H} MM`, fontSize: 22 },
+            { type: "line", width: 99 },
+          ];
+          const lineHeight = 9;
+          lines.forEach((line, i) => {
+            const y = startY + i * lineHeight;
+            if (line.type === "line") {
+              pdf.rect(textX, y - 5, line.width, 1, "F");
+            } else {
+              pdf.setFontSize(line.fontSize);
+              pdf.setFont("helvetica", "bold");
+              pdf.text(line.text, textX, y);
+            }
+          });
+        }
+        const placementY = topMargin + contentHeight + betweenMargin;
+        pdf.rect(sideMargin, placementY, L, contentHeight, "D");
+        pdf.rect(sideMargin + L, placementY, W, contentHeight, "D");
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(40);
+        pdf.text("Placement", sideMargin + L / 2, placementY - 20, { align: "center" });
+
+        // Front Mark placement (水平排列产品)
+        if (placementFront > 0) {
+          const productW = (L - 10) / placementFront;
+          const productH = H - 10;
+          for (let i = 0; i < placementFront; i++) {
+            const x = sideMargin + 5 + i * productW;
+            const y = placementY + 5;
+            pdf.setDrawColor(255, 0, 0);
+            pdf.setLineWidth(5);
+            pdf.rect(x, y, productW, productH, "D");
           }
-        });
-      }
-      const placementY = topMargin + contentHeight + betweenMargin;
-      pdf.rect(sideMargin, placementY, L, contentHeight, 'D');
-      pdf.rect(sideMargin + L, placementY, W, contentHeight, 'D');
-      pdf.setFontSize(40);
-      pdf.text("Placement", sideMargin + L / 2, placementY - 20, { align: 'center' });
+        }
 
-      pdf.save(`${fileName}.pdf`);
-    });
-  </script>
-</body>
+        // Side Mark placement (同样是水平排列产品)
+        if (placementSide > 0) {
+          const productW = (W - 10) / placementSide;
+          const productH = H - 10;
+          for (let i = 0; i < placementSide; i++) {
+            const x = sideMargin + L + 5 + i * productW;
+            const y = placementY + 5;
+            pdf.setDrawColor(255, 0, 0);
+            pdf.setLineWidth(5);
+            pdf.rect(x, y, productW, productH, "D");
+          }
+        }
+
+        pdf.save(`${fileName}.pdf`);
+      });
+    </script>
+  </body>
 </html>
